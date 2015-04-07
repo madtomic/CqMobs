@@ -4,8 +4,11 @@ import com.conquestia.mobs.Commands.CqmCommandHandler;
 import com.conquestia.mobs.Config.Config;
 import com.conquestia.mobs.MobArena.MobArenaHandler;
 import java.io.File;
+import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Scanner;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.World;
@@ -30,10 +33,9 @@ public class ConquestiaMobs extends JavaPlugin implements CommandExecutor {
     private static boolean debug; //debug variable
     private static DisplayUtil display;
     private boolean compat1_8 = false;
-    
-    private static ArrayList<World> worldList= new ArrayList<>();
-    
-    
+    private static PrintWriter logger;
+
+    private static ArrayList<World> worldList = new ArrayList<>();
 
     /**
      * Sets up config file, generates defaults if needed. Enables handlers
@@ -47,7 +49,7 @@ public class ConquestiaMobs extends JavaPlugin implements CommandExecutor {
         setConfigForWorlds(); //Generates default config on first use
         generateNewConfig(); //Generates v0.2 config on first use
         mobConfig.saveConfig();
-        
+
         getLogger().log(Level.INFO, "Detected Bukkit Version: {0}", Bukkit.getBukkitVersion());
         if (Bukkit.getBukkitVersion().contains("1.8")) {
             getLogger().info("Enabling 1.8 features!");
@@ -62,17 +64,35 @@ public class ConquestiaMobs extends JavaPlugin implements CommandExecutor {
                 worldList.add(world);
             }
         }
-        
+
+        if (!mobConfig.getConfig().contains("Debug")) {
+            mobConfig.getConfig().createSection("Debug");
+            mobConfig.getConfig().set("Debug", false);
+        }
+
         //Is debug enabled?
         debug = mobConfig.getConfig().getBoolean("Debug", false);
 
+        if (debug) {
+            File file = new File(this.getDataFolder() + File.separator + "Debug");
+            try {
+                file.createNewFile();
+                logger = new PrintWriter(file);
+            } catch (Exception e) {
+
+            }
+
+        }
+
         //Lets the user know that we successfully enabled this plugin
         getLogger().info("ConquestiaMobs Enabled!");
-        
+
     }
 
     @Override
     public void onDisable() {
+        logger.flush();
+        logger.close();
         //Unregisters unneeded handlers, then alerts server the plugin was successfully disabled
         RefreshMobs();
         HandlerList.unregisterAll(this);
@@ -89,16 +109,16 @@ public class ConquestiaMobs extends JavaPlugin implements CommandExecutor {
 
         //Mob Handlers
         info("Enabling Handlers");
-        
+
         MobSpawnHandler mobSpawnHandler = new MobSpawnHandler(this);
         info("    " + ChatColor.GOLD + "[" + ChatColor.GREEN + "√" + ChatColor.GOLD + "] - Spawn Handler");
-        
+
         MobDamageHandler mobDamageHandler = new MobDamageHandler(this);
         info("    " + ChatColor.GOLD + "[" + ChatColor.GREEN + "√" + ChatColor.GOLD + "] - Damage Handler");
-        
+
         MoneyUtil moneyUtil = MoneyUtil.getInstance();
         info("    " + ChatColor.GOLD + "[" + ChatColor.GREEN + "√" + ChatColor.GOLD + "] - Money Utility");
-        
+
         display = new DisplayUtil(compat1_8, mobConfig.getConfig().getBoolean("MoneyDrops", false), mobConfig.getConfig().getBoolean("HologramUtils", false), mobConfig.getConfig().getBoolean("TitleMoneyDrop", false), mobConfig.getConfig().getBoolean("TitleXp", false));
         info("    " + ChatColor.GOLD + "[" + ChatColor.GREEN + "√" + ChatColor.GOLD + "] - Display Utility");
 
@@ -109,7 +129,7 @@ public class ConquestiaMobs extends JavaPlugin implements CommandExecutor {
         } else {
             info("    " + ChatColor.GOLD + "[" + ChatColor.RED + "X" + ChatColor.GOLD + "] - Mob Arena Handler - Mob Arena not detected, or disabled in settings!");
         }
-        
+
         //Experience Handlers
         if (mobConfig.getConfig().contains("ExperiencePerLevel") && mobConfig.getConfig().getDouble("ExperiencePerLevel") > 0.0) {
             if (mobConfig.getConfig().contains("HeroesExperience") && mobConfig.getConfig().getBoolean("HeroesExperience")) {
@@ -123,18 +143,16 @@ public class ConquestiaMobs extends JavaPlugin implements CommandExecutor {
                 info("    " + ChatColor.GOLD + "[" + ChatColor.GREEN + "√" + ChatColor.GOLD + "] - Vanilla Experience Handler");
             }
         }
-        
-        
+
         //Hologram Utilities
         if (mobConfig.getConfig().contains("HologramUtils") && mobConfig.getConfig().getBoolean("HologramUtils") && Bukkit.getPluginManager().getPlugin("HolographicDisplays") != null) {
             holoUtility = new HoloUtils(this);
             info("    " + ChatColor.GOLD + "[" + ChatColor.GREEN + "√" + ChatColor.GOLD + "] - Hologram Utility");
         } else {
             info("    " + ChatColor.GOLD + "[" + ChatColor.RED + "X" + ChatColor.GOLD + "] - Hologram Utility - Either disabled in config, or plugin not detected!");
-            
+
         }
-        
-        
+
         //Lets server know that the handlers were successfully enabled
         info("Mob Handlers Enabled!");
     }
@@ -142,20 +160,20 @@ public class ConquestiaMobs extends JavaPlugin implements CommandExecutor {
     /**
      * If MobArena is not on the server this returns null, otherwise it return
      * MobArena plugin.
-     * 
+     *
      * @return MobArena The instance of MobArena running on the server
      */
     public static Plugin getMobArena() {
         return Bukkit.getPluginManager().getPlugin("MobArena");
     }
-    
+
     public static DisplayUtil getDisplay() {
         return display;
     }
 
     /**
-     * Applies default values to a configuration section
-     * This copies over all unset default values that were added
+     * Applies default values to a configuration section This copies over all
+     * unset default values that were added
      *
      * @param config configuration section to apply default values for
      */
@@ -171,7 +189,7 @@ public class ConquestiaMobs extends JavaPlugin implements CommandExecutor {
             }
         }
     }
-    
+
     public static ArrayList<World> getEnabledWorlds() {
         return worldList;
     }
@@ -184,7 +202,7 @@ public class ConquestiaMobs extends JavaPlugin implements CommandExecutor {
             for (LivingEntity le : world.getLivingEntities()) {
                 if (le.getType() == EntityType.OCELOT || le.getType() == EntityType.WOLF) {
                     if (le.getType() == EntityType.WOLF) {
-                        Wolf wolf = (Wolf)le;
+                        Wolf wolf = (Wolf) le;
                         if (!wolf.isTamed()) {
                             wolf.remove();
                         }
@@ -234,7 +252,7 @@ public class ConquestiaMobs extends JavaPlugin implements CommandExecutor {
             mobConfig.getConfig().set("TitleMoneyDrop", false);
             mobConfig.getConfig().createSection("TitleXp");
             mobConfig.getConfig().set("TitleXp", false);
-            
+
             for (World world : Bukkit.getServer().getWorlds()) {
                 worlds.add(world.getName());
                 mobConfig.getConfig().createSection(world.getName());
@@ -274,84 +292,93 @@ public class ConquestiaMobs extends JavaPlugin implements CommandExecutor {
 
         }
     }
-    
+
     /**
      * Generates v2.1b config on first time use
-     * 
+     *
      */
     public void generateNewConfig() {
-        
+
         if (!mobConfig.getConfig().contains("MoneyDrops")) {
             mobConfig.getConfig().createSection("MoneyDrops");
             mobConfig.getConfig().set("MoneyDrops", true);
         }
-        
+
         if (!mobConfig.getConfig().contains("HologramUtils")) {
             mobConfig.getConfig().createSection("HologramUtils");
             mobConfig.getConfig().set("HologramUtils", true);
         }
-        
+
         if (!mobConfig.getConfig().contains("DynamicFireDamage")) {
             mobConfig.getConfig().createSection("DynamicFireDamage");
-            mobConfig.getConfig().set("DynamicFireDamage", true);    
+            mobConfig.getConfig().set("DynamicFireDamage", true);
         }
-        
+
         if (!mobConfig.getConfig().contains("LevelNameFormat")) {
             mobConfig.getConfig().createSection("LevelNameFormat");
             mobConfig.getConfig().set("LevelNameFormat", "&6[Lvl: &e#&6]");
         }
-        
+
         if (!mobConfig.getConfig().contains("UsePrefix")) {
             mobConfig.getConfig().createSection("UsePrefix");
             mobConfig.getConfig().set("UsePrefix", true);
         }
-        
+
         if (!mobConfig.getConfig().contains("UseSuffix")) {
             mobConfig.getConfig().createSection("UseSuffix");
             mobConfig.getConfig().set("UseSuffix", false);
         }
-        
+
         if (!mobConfig.getConfig().contains("TitleXp")) {
             mobConfig.getConfig().createSection("TitleXp");
             mobConfig.getConfig().set("TitleXp", false);
         }
-        
+
         if (!mobConfig.getConfig().contains("TitleMoneyDrop")) {
             mobConfig.getConfig().createSection("TitleMoneyDrop");
             mobConfig.getConfig().set("TitleMoneyDrop", false);
         }
-        
+
     }
-    
+
     /**
      * Gets the hologram utility object.
-     * 
-     * @return Hologram utility object. 
+     *
+     * @return Hologram utility object.
      */
     public static HoloUtils getHoloUtil() {
         return holoUtility;
     }
-    
+
     public static void info(String infoMsg) {
-            if (Bukkit.getConsoleSender() != null) {
-                Bukkit.getConsoleSender().sendMessage(ChatColor.GOLD + "[" + ChatColor.BLUE + "Conquestia" + ChatColor.YELLOW + "Mobs" + ChatColor.GOLD +"] " + ChatColor.WHITE + infoMsg);
-            } else {
-                Bukkit.getLogger().info("[ConquestiaMobs]" + infoMsg);
-            }    
+        if (Bukkit.getConsoleSender() != null) {
+            Bukkit.getConsoleSender().sendMessage(ChatColor.GOLD + "[" + ChatColor.BLUE + "Conquestia" + ChatColor.YELLOW + "Mobs" + ChatColor.GOLD + "] " + ChatColor.WHITE + infoMsg);
+        } else {
+            Bukkit.getLogger().info("[ConquestiaMobs]" + infoMsg);
+        }
+        if (logger != null) {
+            logger.append("[INFO] " + infoMsg);
+            logger.flush();
+        }
     }
-    
+
     public static void debug(String debugMsg) {
         if (debug) {
             if (Bukkit.getConsoleSender() != null) {
-                Bukkit.getConsoleSender().sendMessage(ChatColor.RED + "[" + ChatColor.DARK_PURPLE + "CQM DEBUG" + ChatColor.RED  + "] " + ChatColor.WHITE + debugMsg);
+                Bukkit.getConsoleSender().sendMessage(ChatColor.RED + "[" + ChatColor.DARK_PURPLE + "CQM DEBUG" + ChatColor.RED + "] " + ChatColor.WHITE + debugMsg);
             } else {
                 Bukkit.getLogger().info("[DEBUG] " + debugMsg);
             }
         }
+
+        if (logger != null) {
+            logger.append("[DEBUG] " + debugMsg);
+            logger.flush();
+        }
     }
-    
+
     public static void refreshConfig() {
         mobConfig.reloadConfig();
     }
-    
+
 }
