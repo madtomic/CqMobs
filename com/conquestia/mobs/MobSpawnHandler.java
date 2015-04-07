@@ -28,7 +28,7 @@ import org.bukkit.plugin.java.JavaPlugin;
  */
 public class MobSpawnHandler implements Listener {
 
-    private static ArrayList<EntityType> exempt = new ArrayList<EntityType>(); //List of mobs that we want to have a level
+    private static final ArrayList<EntityType> exempt = new ArrayList<>(); //List of mobs that we want to have a level
     private static final HashMap<String, Integer> levelMap = new HashMap<>();
     private static String format;
 
@@ -48,7 +48,7 @@ public class MobSpawnHandler implements Listener {
     public MobSpawnHandler(JavaPlugin plugin) {
         cqm = (ConquestiaMobs) plugin;
         mobConfig = new Config(plugin, "Spawning" + File.separator + "MobSpawns");
-        Bukkit.getServer().getPluginManager().registerEvents(this, plugin);
+        Bukkit.getServer().getPluginManager().registerEvents((Listener)this, plugin);
         addExemptEntities();
         format = mobConfig.getConfig().getString("LevelNameFormat", "&6[Lvl: &e#&6]");
     }
@@ -204,8 +204,8 @@ public class MobSpawnHandler implements Listener {
         int wave = 0;
         distancePerLevel = mobConfig.getConfig().getDouble(world + ".DistancePerLevel", 35.0);
         int maxLevel = mobConfig.getConfig().getInt(world + ".MaxLevel", 0);
-        if (cqm.getMobArena() != null && mobConfig.getConfig().getBoolean(world + ".MobArenaWaveLeveling", true) && ((com.garbagemule.MobArena.MobArena) cqm.getMobArena()).getArenaMaster().getArenaAtLocation(spawnLocation) != null) {
-            wave = ((com.garbagemule.MobArena.MobArena) cqm.getMobArena()).getArenaMaster().getArenaAtLocation(spawnLocation).getWaveManager().getWaveNumber();
+        if (ConquestiaMobs.getMobArena() != null && mobConfig.getConfig().getBoolean(world + ".MobArenaWaveLeveling", true) && ((com.garbagemule.MobArena.MobArena) ConquestiaMobs.getMobArena()).getArenaMaster().getArenaAtLocation(spawnLocation) != null) {
+            wave = ((com.garbagemule.MobArena.MobArena) ConquestiaMobs.getMobArena()).getArenaMaster().getArenaAtLocation(spawnLocation).getWaveManager().getWaveNumber();
         }
 
         if (maxLevel != 0 && ((distance / distancePerLevel) + wave + startLevel) > maxLevel) {
@@ -297,7 +297,7 @@ public class MobSpawnHandler implements Listener {
                 event.getEntity().setHealth(newHealth - 0.5);
                 if (mobConfig.getConfig().contains("NamePlatesAlwaysVisible") && mobConfig.getConfig().getBoolean("NamePlatesAlwaysVisible")) {
                     event.getEntity().setCustomNameVisible(true);
-                    ConquestiaMobs.debug("Made mob's name plate visilbe");
+                    ConquestiaMobs.debug("Made mob's name plate visible");
                 }
             }
 
