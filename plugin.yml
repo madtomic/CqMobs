@@ -1,0 +1,19 @@
+name: ConquestiaMobs
+main: com.conquestia.mobs.ConquestiaMobs
+version: 2.1.3b
+author: Ultiferrago
+soft-depend: [Vault, HolographicDisplays, MobArena]
+
+commands:
+   cqm:
+      description: Controls all Conquestia Mob Commands.
+      permission: conquestiamobs.admin
+      permission-message: You don't have permission for that command!
+
+permissions:
+  conquestiamobs.admin:
+    default: op
+    
+
+
+
