@@ -5,7 +5,6 @@ import com.conquestia.mobs.Commands.CqmCommandHandler;
 import com.conquestia.mobs.ConquestiaMobs;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
 /**
@@ -29,6 +28,7 @@ public class CmdReload implements CqmCommand {
             sender.sendMessage(getHelp());
             return;
         }
+        ConquestiaMobs.refreshConfig();
         plugin.getServer().getPluginManager().disablePlugin(plugin);
         plugin.getServer().getPluginManager().enablePlugin(plugin);
         ((ConquestiaMobs)plugin).RefreshMobs();

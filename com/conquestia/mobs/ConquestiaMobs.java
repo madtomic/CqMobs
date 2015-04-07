@@ -5,6 +5,7 @@ import com.conquestia.mobs.Config.Config;
 import com.conquestia.mobs.MobArena.MobArenaHandler;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.logging.Level;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.World;
@@ -24,7 +25,7 @@ import org.bukkit.plugin.java.JavaPlugin;
  */
 public class ConquestiaMobs extends JavaPlugin implements CommandExecutor {
 
-    private Config mobConfig; //Configuration file
+    private static Config mobConfig; //Configuration file
     private static HoloUtils holoUtility; //Holo util
     private static boolean debug; //debug variable
     private static DisplayUtil display;
@@ -47,7 +48,7 @@ public class ConquestiaMobs extends JavaPlugin implements CommandExecutor {
         generateNewConfig(); //Generates v0.2 config on first use
         mobConfig.saveConfig();
         
-        getLogger().info("Detected Bukkit Version: " + Bukkit.getBukkitVersion());
+        getLogger().log(Level.INFO, "Detected Bukkit Version: {0}", Bukkit.getBukkitVersion());
         if (Bukkit.getBukkitVersion().contains("1.8")) {
             getLogger().info("Enabling 1.8 features!");
             compat1_8 = true;
@@ -347,6 +348,10 @@ public class ConquestiaMobs extends JavaPlugin implements CommandExecutor {
                 Bukkit.getLogger().info("[DEBUG] " + debugMsg);
             }
         }
+    }
+    
+    public static void refreshConfig() {
+        mobConfig.reloadConfig();
     }
     
 }
