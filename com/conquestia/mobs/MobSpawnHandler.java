@@ -280,7 +280,7 @@ public class MobSpawnHandler implements Listener {
             }
 
             if (closestSpawn != null) {
-                int level = getLevel(closestSpawn.distanceSquared(event.getLocation()), event.getLocation(), event.getLocation().getWorld().getName(), closestSpawn);
+                int level = getLevel(closestSpawn.distance(event.getLocation()), event.getLocation(), event.getLocation().getWorld().getName(), closestSpawn);
                 levelMap.put(event.getEntity().getUniqueId().toString(), level);
                 healthMultiplier = mobConfig.getConfig().getDouble(event.getLocation().getWorld().getName() + ".HealthMultiplier", 0.01);
                 setName(event.getEntity(), level);

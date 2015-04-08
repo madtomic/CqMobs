@@ -37,6 +37,10 @@ public class DisplayUtil {
                 money = 0;
             }
             
+            if (ConquestiaMobs.getHoloUtil() == null) {
+                return;
+            }
+            
             com.gmail.filoghost.holograms.api.Hologram holo;
             
             if (partyMembers != null) {

@@ -1,5 +1,6 @@
 package com.conquestia.mobs;
 
+import com.sucy.skill.api.enums.ExpSource;
 import com.sucy.skill.api.event.PlayerExperienceGainEvent;
 import java.util.HashMap;
 import java.util.Random;
@@ -12,6 +13,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.plugin.Plugin;
 
 /**
@@ -47,7 +49,7 @@ public class SkillAPIExperienceHandler implements Listener {
         if (!ConquestiaMobs.getEnabledWorlds().contains(event.getPlayerData().getPlayer().getWorld())) {
             return;
         }
-        if (event.isCommandExp()) {
+        if (event.getSource() != ExpSource.MOB) {
             return;
         }
         int xp = 0;
@@ -88,14 +90,16 @@ public class SkillAPIExperienceHandler implements Listener {
         }
         
     }
+
     
-    @EventHandler(priority=EventPriority.LOWEST, ignoreCancelled=false)
-    public void onEntityDeath(EntityDamageByEntityEvent event) {
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    public void onEntityDeath2(EntityDeathEvent event) {
         if (!ConquestiaMobs.getEnabledWorlds().contains(event.getEntity().getWorld())) {
             return;
         }
-        if (event.getDamager() instanceof Player && event.getEntity() instanceof LivingEntity && ((LivingEntity)event.getEntity()).getHealth() - event.getDamage() <= 0 && ((LivingEntity)event.getEntity()).getCustomName() != null && ((LivingEntity)event.getEntity()).getCustomName().contains("Lvl")) {
-            mobKillMap.put(((Player)event.getDamager()).getUniqueId().toString(), (LivingEntity)event.getEntity());
+        
+        if (event.getEntity() instanceof LivingEntity) {
+            mobKillMap.put(((Player)event.getEntity().getKiller()).getUniqueId().toString(), event.getEntity());
         }
     }
     
