@@ -357,7 +357,7 @@ public class ConquestiaMobs extends JavaPlugin implements CommandExecutor {
             Bukkit.getLogger().info("[ConquestiaMobs]" + infoMsg);
         }
         if (logger != null) {
-            logger.append("[INFO] " + infoMsg);
+            logger.append("[INFO] " + infoMsg + "\n");
             logger.flush();
         }
     }
@@ -372,7 +372,7 @@ public class ConquestiaMobs extends JavaPlugin implements CommandExecutor {
         }
 
         if (logger != null) {
-            logger.append("[DEBUG] " + debugMsg);
+            logger.append("[DEBUG] " + debugMsg + "\n");
             logger.flush();
         }
     }

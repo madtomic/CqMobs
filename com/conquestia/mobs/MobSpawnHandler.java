@@ -220,11 +220,11 @@ public class MobSpawnHandler implements Listener {
         String newName = "";
         if (ent.getCustomName() != null && !ent.getCustomName().toLowerCase().contains("null")) {
             newName = ent.getCustomName();
-            ConquestiaMobs.debug("Mob's name is a custom name!");
+            ConquestiaMobs.debug("[Spawning] Mob's name is a custom name!");
         } else {
             newName = ent.getType().toString();
             newName = newName.substring(0, 1).toUpperCase() + newName.substring(1).toLowerCase();
-            ConquestiaMobs.debug("Mobs name is default name");
+            ConquestiaMobs.debug("[Spawning] Mobs name is default name");
         }
         
         boolean prefix = mobConfig.getConfig().getBoolean("UsePrefix", true);
@@ -248,11 +248,11 @@ public class MobSpawnHandler implements Listener {
             return;
         }
 
-        ConquestiaMobs.debug("Handling spawning of " + event.getCreatureType().getName());
+        ConquestiaMobs.debug("[Spawning] Handling spawning of " + event.getCreatureType().getName());
 
         if (event.getSpawnReason() == SpawnReason.SPAWNER) {
             event.getEntity().setMetadata("Spawner", new FixedMetadataValue(cqm, true));
-            ConquestiaMobs.debug("Mob spawned from spawner, marking mob!");
+            ConquestiaMobs.debug("[Spawning] Mob spawned from spawner, marking mob!");
         }
 
         if (!exempt.contains(event.getEntityType())) {
@@ -276,7 +276,7 @@ public class MobSpawnHandler implements Listener {
 
             Location closestSpawn = getClosestSpawn(spawns, event.getLocation());
             if (closestSpawn != null) {
-                ConquestiaMobs.debug("Found closest spawn point, using " + closestSpawn.toString());
+                ConquestiaMobs.debug("[Spawning] Found closest spawn point, using " + closestSpawn.toString());
             }
 
             if (closestSpawn != null) {
@@ -288,7 +288,7 @@ public class MobSpawnHandler implements Listener {
                 double oldHealth = event.getEntity().getHealth();
                 double newHealth = ((oldHealth + oldHealth * (level * healthMultiplier)));
 
-                ConquestiaMobs.debug("Spawned Health: " + oldHealth + " NewHealth: " + newHealth);
+                ConquestiaMobs.debug("[Spawning] Spawned Health: " + oldHealth + " NewHealth: " + newHealth);
 
                 if (newHealth > 1) {
                     newHealth += 2.0;
@@ -297,7 +297,7 @@ public class MobSpawnHandler implements Listener {
                 event.getEntity().setHealth(newHealth - 0.5);
                 if (mobConfig.getConfig().contains("NamePlatesAlwaysVisible") && mobConfig.getConfig().getBoolean("NamePlatesAlwaysVisible")) {
                     event.getEntity().setCustomNameVisible(true);
-                    ConquestiaMobs.debug("Made mob's name plate visible");
+                    ConquestiaMobs.debug("[Spawning] Made mob's name plate visible");
                 }
             }
 
