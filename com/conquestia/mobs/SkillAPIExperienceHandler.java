@@ -12,7 +12,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.plugin.Plugin;
 
@@ -28,7 +27,7 @@ public class SkillAPIExperienceHandler implements Listener {
     private final double maScale;
     private final boolean moneyDrops;
     private final boolean debug;
-    private boolean showDeath = true;
+    private boolean showDeath = false;
     private final Plugin plugin;
     
     public SkillAPIExperienceHandler(Plugin plugin, double experienceScale, boolean maEnabled, double maScale, boolean moneyDrops, boolean debug) {
@@ -74,8 +73,8 @@ public class SkillAPIExperienceHandler implements Listener {
                 loc.setY(loc.getY() + 2);
                 double maxMoney = 0;
                 double actualMoney = 0;
-                if (typeCost.containsKey(mobKillMap.get(event.getPlayerData().getPlayer().getUniqueId().toString()))) {
-                    double entityDrop = typeCost.get(mobKillMap.get(event.getPlayerData().getPlayer().getUniqueId().toString()));
+                if (typeCost.containsKey(ent.getType())) {
+                    double entityDrop = typeCost.get(ent.getType());
                     maxMoney = entityDrop + entityDrop * level * 0.1;
                     actualMoney = maxMoney * rand.nextDouble();
                 }
