@@ -6,9 +6,7 @@ import com.conquestia.mobs.MobArena.MobArenaHandler;
 import java.io.File;
 import java.io.PrintWriter;
 import java.util.ArrayList;
-import java.util.Scanner;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.World;
@@ -241,7 +239,7 @@ public class ConquestiaMobs extends JavaPlugin implements CommandExecutor {
             mobConfig.getConfig().createSection("DynamicFireDamage");
             mobConfig.getConfig().set("DynamicFireDamage", true);
             mobConfig.getConfig().createSection("LevelNameFormat");
-            mobConfig.getConfig().set("LevelNameFormat", "&6[Lvl: &e#&6]");
+            mobConfig.getConfig().set("LevelNameFormat", "&6[Lvl: &e#&6]&f");
             mobConfig.getConfig().createSection("UsePrefix");
             mobConfig.getConfig().set("UsePrefix", true);
             mobConfig.getConfig().createSection("UseSuffix");

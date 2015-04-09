@@ -50,7 +50,7 @@ public class MobSpawnHandler implements Listener {
         mobConfig = new Config(plugin, "Spawning" + File.separator + "MobSpawns");
         Bukkit.getServer().getPluginManager().registerEvents((Listener)this, plugin);
         addExemptEntities();
-        format = mobConfig.getConfig().getString("LevelNameFormat", "&6[Lvl: &e#&6]");
+        format = mobConfig.getConfig().getString("LevelNameFormat", "&6[Lvl: &e#&6]&f");
     }
 
     /**
@@ -231,7 +231,7 @@ public class MobSpawnHandler implements Listener {
         boolean suffix = mobConfig.getConfig().getBoolean("UseSuffix", false);
         
         if (prefix) {
-            newName = ChatColor.translateAlternateColorCodes('&', format.replace("#", level + "")) + " " + ChatColor.WHITE + newName;
+            newName = ChatColor.translateAlternateColorCodes('&', format.replace("#", level + "")) + " " + newName;
         }
         
         if (suffix) {
